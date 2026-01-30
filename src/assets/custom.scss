@@ -1,0 +1,282 @@
+// ===========================================
+// 🅐 FONT IMPORT
+// ===========================================
+@import url('https://fonts.googleapis.com/css2?family=Neuton:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+// ===========================================
+// 🅑 WARNA DASAR
+// ===========================================
+$primary: #006341;   // Hijau Neuton (judul)
+$secondary: #b3a369; // Emas Inter (body)
+$additional: #6fa287;
+$additional2: #a2aaad;
+
+// ===========================================
+// 🅒 TIPOGRAFI DASAR
+// ===========================================
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+// Font family
+$headings-font-family: 'Inter', sans-serif;
+$font-family-base: 'Inter', sans-serif;
+
+// Ukuran dasar dan skala
+$font-size-base: 1rem; // 16px
+$font-scale-ratio: 1.25; // Major Third Scale
+
+// Line height
+$line-height-base: 1.6;
+$headings-line-height: 1.25;
+
+// ===========================================
+// 🅓 HIERARKI TIPOGRAFI SESUAI SKALA
+// ===========================================
+
+// Menghitung manual dengan skala 1.25 (Major Third)
+// Base = 16px → h1-h6 pakai rem (1rem = 16px)
+$h1-font-size: 24px;  // 61.04px
+$h2-font-size: 20px;  // 48.83px
+$h3-font-size: 18px;  // 39.06px
+$h4-font-size: 16px;  // 31.25px
+$h5-font-size: 14px;  // 25px
+$h6-font-size: 14px;   // 20px
+$p-font-size: 12px;       // 16px
+$small-font-size: 10px; // 12.8px
+
+// ===========================================
+// 🅔 STYLING GLOBAL
+// ===========================================
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: #212529;
+  background-color: #dfede8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $headings-font-family;
+  line-height: $headings-line-height;
+  font-weight: 700;
+  color: $primary;
+}
+
+h1 { font-size: $h1-font-size; }
+h2 { font-size: $h2-font-size; }
+h3 { font-size: $h3-font-size; }
+h4 { font-size: $h4-font-size; }
+h5 { font-size: $h5-font-size; }
+h6 { font-size: $h6-font-size; }
+
+p {
+  font-size: $p-font-size;
+  color: #333;
+}
+
+small {
+  font-size: $small-font-size;
+  color: #666;
+}
+
+.title{
+  letter-spacing: 0.04em;
+}
+// ===========================================
+// 🅕 IMPORT BOOTSTRAP
+// ===========================================
+@import 'bootstrap/scss/bootstrap';
+// Style judul di header atau navbar
+
+.navbar-brand,
+.header-title {
+  font-family: 'Neuton', serif;
+  /* font-weight: 700; */
+  /* font-size: 1.75rem; */
+  color: #fff;
+  letter-spacing: 0.04em; // 🔹 spasi antar huruf seperti gambar kedua
+}
+.btn-img{
+  background-image: url('/assets/btn.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.btn-outline-additional2 {
+  border: solid 1px $additional2;
+  color: $additional2;
+  background: #fff;
+  border: none;
+}
+.btn-outline-additional2:hover {
+  border: solid 1px #fff;
+  background-color: $additional2;
+  color: #fff;
+  border: none;
+}
+.btn-gradient:hover {
+  background: linear-gradient(180deg, $additional, $primary);
+  color: #fff;
+  opacity: 0.9;
+}
+.bg-additional {
+  background-color: $additional !important;
+}
+
+.text-additional {
+  color: $additional !important;
+}
+
+.bg-additional2 {
+  background-color: $additional2 !important;
+}
+
+.nav-pills {
+  .nav-link {
+    background: #fff;
+    border: 1px solid $primary;
+    border-radius: 0.5rem;
+    margin: 2px 5px;
+    padding: 0.5rem 2rem; // lebih balance daripada hanya left/right
+    transition: 0.3s ease;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+
+    &.active {
+      color: #fff;
+      background: linear-gradient(135deg, $primary, $additional);
+      border: none;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+  }
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, $additional, $primary);
+  color: #fff;
+  border: none;
+}
+.btn-gradient:hover {
+  background: linear-gradient(180deg, $additional, $primary);
+  color: #fff;
+  opacity: 0.9;
+}
+
+.text-additional2 {
+  color: $additional2 !important;
+}
+
+ul.nav .nav-link.active {
+  background-color: $primary !important;
+  color: #fff !important;
+  font-weight: 500;
+  border-radius: 0.375rem;
+}
+
+/* ====== Layout umum ====== */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  display: flex;
+  margin-top: 65px;
+  flex: 1;
+  flex-direction: row;
+  /* overflow-x: hidden; */
+  transition: margin-left 0.3s ease;
+}
+
+.shadow-bottom {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.spinner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* =============== media frame ================ */
+/* Sidebar fix untuk layar besar */
+@media (min-width: 992px) {
+  .content {
+    margin-left: 260px; /* sesuaikan lebar sidebar */
+  }
+
+  .content.sidebar-collapsed {
+    margin-left: 80px; /* versi collapse */
+  }
+}
+
+/* ====== Versi mobile (≤991px) ====== */
+@media (max-width: 991px) {
+  .content {
+    flex-direction: column;
+    margin-left: 80px !important; /* default: sidebar collapsed */
+    margin-top: 60px; /* biar gak ketimpa header */
+    transition: margin-left 0.3s ease;
+  }
+
+  /* Kalau sidebar lagi terbuka (utuh 250px) */
+  .content.sidebar-expanded {
+    margin-left: 250px !important; /* geser sesuai lebar sidebar */
+  }
+
+  /* Sidebar biar ngambang di kiri tapi gak nutup konten */
+  .navbar-admin {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 250px;
+    height: calc(100vh - 60px);
+    background-color: #fff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1040;
+  }
+
+  /* Saat sidebar aktif, tampil penuh */
+  .navbar-admin.active {
+    transform: translateX(0);
+  }
+
+  /* Konten utama */
+  .container-fluid {
+    padding: 1rem;
+  }
+
+  .welcome-card {
+    margin: 0 auto;
+    max-width: 95%;
+  }
+
+  .welcome-img {
+    max-width: 180px;
+    margin-top: 1rem;
+  }
+
+}
