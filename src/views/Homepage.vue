@@ -887,7 +887,7 @@ const currentMonthYear = new Date().toLocaleDateString('id-ID', {
    API CONFIG
 ========================== */
 //const baseURL = 'http://localhost:8000'
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 /* =========================
    SLIDER TEXT STATE
 ========================== */

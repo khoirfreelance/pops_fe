@@ -384,7 +384,7 @@ import NavbarAdmin from '@/components/NavbarAdmin.vue'
 import Welcome from '@/components/Welcome.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Slider',

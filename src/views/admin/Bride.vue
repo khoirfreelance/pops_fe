@@ -893,7 +893,7 @@ import { mapFilterToExcel } from "@/mappers/mapFilterToExcel";
 import { eventBus } from '@/eventBus'
 
 // contoh hasil: "http://192.168.0.5:8000"
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names

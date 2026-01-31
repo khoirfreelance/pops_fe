@@ -163,7 +163,7 @@ import NavbarAdmin from '@/components/NavbarAdmin.vue'
 import axios from 'axios'
 import Welcome from '@/components/Welcome.vue'
 
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 
 export default {
   name: 'FooterAdmin',

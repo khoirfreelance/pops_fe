@@ -474,7 +474,7 @@ import NavbarAdmin from '@/components/NavbarAdmin.vue'
 import HeaderAdmin from '@/components/HeaderAdmin.vue'
 import axios from 'axios'
 import * as bootstrap from 'bootstrap'
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Profile',

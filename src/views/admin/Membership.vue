@@ -730,7 +730,7 @@ import 'vue3-easy-data-table/dist/style.css'
 import axios from 'axios'
 import Welcome from '@/components/Welcome.vue'
 import Swal from 'sweetalert2'
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'membership',

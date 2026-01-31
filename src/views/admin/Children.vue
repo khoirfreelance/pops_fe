@@ -1642,7 +1642,7 @@ const bulan = [
 ]
 
 // Bangun base URL dari window.location
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names

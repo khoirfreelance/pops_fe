@@ -78,7 +78,7 @@ import axios from 'axios'
 //const { protocol, hostname } = window.location
 // contoh hasil: "http://192.168.0.5:8000"
 //const baseURL = `${protocol}//${hostname}:${API_PORT}`
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 
 export default {
   components: { CopyRight },

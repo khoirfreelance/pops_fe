@@ -2142,7 +2142,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { mapFilterToExcel } from "@/mappers/mapFilterToExcel";
 import { eventBus } from '@/eventBus'
 
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 Chart.register(PieController, ArcElement, Tooltip, Legend, ChartDataLabels)

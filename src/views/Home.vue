@@ -817,7 +817,7 @@ const currentMonthYear = new Date().toLocaleDateString('id-ID', {
 // Bangun base URL dari window.location
 //const { protocol, hostname } = window.location
 // contoh hasil: "http://192.168.0.5:8000"
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 
 /* =========================
    SLIDER TEXT STATE

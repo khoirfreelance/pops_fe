@@ -43,7 +43,8 @@ import { eventBus } from '@/eventBus'
 //const API_PORT = 8000
 //const { protocol, hostname } = window.location
 //const baseURL = `${protocol}//${hostname}:${API_PORT}`
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Welcome',

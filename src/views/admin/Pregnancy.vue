@@ -915,7 +915,7 @@ import { exportExcel } from "@/utils/exportExcel";
 import { mapDataIbuHamilToExcel } from "@/mappers/dataIbuHamilMapper";
 import { mapFilterToExcel } from "@/mappers/mapFilterToExcel";
 import { eventBus } from '@/eventBus'
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Pregnancy',

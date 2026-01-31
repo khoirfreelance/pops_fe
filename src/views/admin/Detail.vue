@@ -290,7 +290,7 @@ Chart.register(
   Filler,
 )
 
-const baseURL = 'http://localhost/backend/public'
+const baseURL = 'https://datapops.id/apps/public'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Detail',
