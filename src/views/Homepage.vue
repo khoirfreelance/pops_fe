@@ -14,7 +14,7 @@
           <li class="nav-item">
             <a class="nav-link d-flex align-items-center gap-2 text-success" href="/">
               <img
-                src="@/assets/icons/home.png"
+                src="/icons/home.png"
                 alt="Home"
                 class="nav-home-icon"
               />
@@ -68,7 +68,7 @@
                 href="#statusgizi"
                 class="btn btn-ajukan d-flex align-items-center gap-2 rounded-pill"
               >
-                <img src="@/assets/icons/data-white.png" alt="Ajukan" class="btn-icon">
+                <img src="/icons/data-white.png" alt="Ajukan" class="btn-icon">
                 <span>| Lihat Data</span>
               </a>
 
@@ -77,7 +77,7 @@
                 type="button"
                 @click="goDashboard"
               >
-                <img src="@/assets/icons/login-green.png" alt="Masuk" class="btn-icon">
+                <img src="/icons/login-green.png" alt="Masuk" class="btn-icon">
                 <span>| Masuk ke Dashboard</span>
               </button>
             </div>
@@ -210,7 +210,7 @@
                       @click="gender = 'L'"
                     >
                       <div class="gender-inner male">
-                        <img src="@/assets/icons/boy.png" alt="Laki-laki" />
+                        <img src="/icons/boy.png" alt="Laki-laki" />
                       </div>
                       <span>Laki-laki</span>
                     </div>
@@ -223,7 +223,7 @@
                       @click="gender = 'P'"
                     >
                       <div class="gender-inner female">
-                        <img src="@/assets/icons/girl.png" alt="Perempuan" />
+                        <img src="/icons/girl.png" alt="Perempuan" />
                       </div>
                       <span>Perempuan</span>
                     </div>
@@ -913,13 +913,13 @@ const footerSocials = ref([])
    SOCIAL ICON MAP
 ========================== */
 const socialIcons = {
-  call: '@/assets/icons/phone.png',
-  email: '@/assets/icons/email.png',
-  web: '@/assets/icons/web.png',
-  twitter: '@/assets/icons/twitter.png',
-  instagram: '@/assets/icons/instagram.png',
-  facebook: '@/assets/icons/facebook.png',
-  linkedin: '@/assets/icons/linkedin.png',
+  call: '/icons/phone.png',
+  email: '/icons/email.png',
+  web: '/icons/web.png',
+  twitter: '/icons/twitter.png',
+  instagram: '/icons/instagram.png',
+  facebook: '/icons/facebook.png',
+  linkedin: '/icons/linkedin.png',
 }
 
 /* =========================
