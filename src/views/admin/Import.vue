@@ -157,27 +157,27 @@
                   <!-- Preview / status -->
                   <div class="mt-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div v-if="filePreviewTable.length" class="mt-3">
-                      <p class="fw-bold mb-1 text-danger">
+                      <p class="fw-bold mb-1 text-success">
                         *Preview:
                       </p>
                       <div class="table-responsive">
-                        <table class="table table-bordered table-sm small border-danger">
+                        <table class="table table-bordered table-sm small border-success">
                           <thead>
                             <tr>
                               <th v-for="(col, index) in filePreviewTable[0]" :key="'h' + index" width="120"
-                                class="text-danger">
+                                class="text-success">
                                 {{ col }}
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="(row, rIndex) in filePreviewTable.slice(1)" :key="'r' + rIndex">
-                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-danger">
+                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-success">
                                 {{ col }}
                               </td>
                             </tr>
                             <tr v-for="(row, rIndex) in filePreviewTable.slice(2)" :key="'r' + rIndex">
-                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-danger">
+                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-success">
                                 ...
                               </td>
                             </tr>
@@ -190,7 +190,7 @@
                     <div v-else class="text-muted small">Belum ada file dipilih</div>
                   </div>
 
-                  <div v-if="fileError" class="mt-2 text-danger small">
+                  <div v-if="fileError" class="mt-2 text-success small">
                     {{ fileError }}
                   </div>
 
@@ -214,25 +214,80 @@
 
               <div class="card shadow-sm">
                 <div class="card-body">
-                  <!-- Search + Button -->
-                  <div class="d-flex align-items-center justify-content-end gap-2">
+                  <!-- Search + Action -->
+                  <div class="row g-2 align-items-end">
 
-                    <input type="text" class="form-control form-control-sm" style="width: 220px;"
-                      placeholder="Ketik NIK atau Nama" v-model="searchQuery_kunAn">
+                    <!-- Filter -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2">
 
-                    <button :class="aktifitas === 'Kunjungan Posyandu'? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
-                      @click="isUploadOpen = !isUploadOpen; aktifitas = 'Kunjungan Posyandu'">
-                      <i class="bi bi-filetype-csv me-1"></i> Import Kunjungan
-                    </button>
-                    <button :class="aktifitas === 'Pendampingan Anak'? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
-                      @click="isUploadOpen = !isUploadOpen; aktifitas = 'Pendampingan Anak'">
-                      <i class="bi bi-filetype-csv me-1"></i> Import Pendampingan
-                    </button>
-                    <button :class="aktifitas === 'Intervensi Anak'? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
-                      @click="isUploadOpen = !isUploadOpen; aktifitas = 'Intervensi Anak'">
-                      <i class="bi bi-filetype-csv me-1"></i> Import Intervensi
-                    </button>
+                        <select v-if="role === 'Super Admin' " v-model="selectDesa_kunAn"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Desa</option>
+                          <option v-for="desa in listKelurahan"
+                                  :key="desa.id"
+                                  :value="desa.kelurahan">
+                            {{ desa.label }}
+                          </option>
+                        </select>
+
+                        <select v-model="searchDate_kunAn"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Periode</option>
+                          <option value="01">Januari</option>
+                          <option value="02">Februari</option>
+                          <option value="03">Maret</option>
+                          <option value="04">April</option>
+                          <option value="05">Mei</option>
+                          <option value="06">Juni</option>
+                          <option value="07">Juli</option>
+                          <option value="08">Agustus</option>
+                          <option value="09">September</option>
+                          <option value="10">Oktober</option>
+                          <option value="11">November</option>
+                          <option value="12">Desember</option>
+                        </select>
+
+                        <select v-model="searchYear_kunAn"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Tahun</option>
+                          <option v-for="year in yearOptions"
+                                  :key="year"
+                                  :value="year">
+                            {{ year }}
+                          </option>
+                        </select>
+
+                      </div>
+                    </div>
+
+                    <!-- Search + Button -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+
+                        <input type="text"
+                              class="form-control form-control-sm w-auto"
+                              placeholder="Ketik NIK atau Nama"
+                              v-model="searchQuery_kunAn">
+
+                        <button :class="aktifitas === 'Kunjungan Posyandu'? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
+                          @click="isUploadOpen = !isUploadOpen; aktifitas = 'Kunjungan Posyandu'">
+                          <i class="bi bi-filetype-csv me-1"></i> Import Kunjungan
+                        </button>
+                        <button :class="aktifitas === 'Pendampingan Anak'? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
+                          @click="isUploadOpen = !isUploadOpen; aktifitas = 'Pendampingan Anak'">
+                          <i class="bi bi-filetype-csv me-1"></i> Import Pendampingan
+                        </button>
+                        <button :class="aktifitas === 'Intervensi Anak'? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
+                          @click="isUploadOpen = !isUploadOpen; aktifitas = 'Intervensi Anak'">
+                          <i class="bi bi-filetype-csv me-1"></i> Import Intervensi
+                        </button>
+
+                      </div>
+                    </div>
+
                   </div>
+
                   <!-- Table -->
                   <div class="mt-3">
 
@@ -399,27 +454,27 @@
                   <!-- Preview / status -->
                   <div class="mt-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div v-if="filePreviewTable_bumil.length" class="mt-3">
-                      <p class="fw-bold mb-1 text-danger">
+                      <p class="fw-bold mb-1 text-success">
                         *Preview:
                       </p>
                       <div class="table-responsive">
-                        <table class="table table-bordered table-sm small border-danger">
+                        <table class="table table-bordered table-sm small border-success">
                           <thead>
                             <tr>
                               <th v-for="(col, index) in filePreviewTable_bumil[0]" :key="'h' + index" width="120"
-                                class="text-danger">
+                                class="text-success">
                                 {{ col }}
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="(row, rIndex) in filePreviewTable_bumil.slice(1)" :key="'r' + rIndex">
-                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-danger">
+                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-success">
                                 {{ col }}
                               </td>
                             </tr>
                             <tr v-for="(row, rIndex) in filePreviewTable_bumil.slice(2)" :key="'r' + rIndex">
-                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-danger">
+                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-success">
                                 ...
                               </td>
                             </tr>
@@ -432,7 +487,7 @@
                     <div v-else class="text-muted small">Belum ada file dipilih</div>
                   </div>
 
-                  <div v-if="fileError" class="mt-2 text-danger small">
+                  <div v-if="fileError" class="mt-2 text-success small">
                     {{ fileError }}
                   </div>
 
@@ -457,19 +512,70 @@
               <div class="card shadow-sm">
                 <div class="card-body">
                   <!-- Search + Button -->
-                  <div class="d-flex align-items-center justify-content-end gap-2">
+                  <div class="row g-2 align-items-end">
 
-                    <input type="text" class="form-control form-control-sm" style="width: 220px;"
-                      placeholder="Ketik NIK atau Nama" v-model="searchQuery_bumil">
+                    <!-- Filter -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2">
 
-                    <button :class="aktifitas === 'Pendampingan Bumil'?'btn btn-primary btn-sm':'btn btn-outline-primary btn-sm'" type="button"
-                      @click="isUploadOpen_bumil = !isUploadOpen_bumil; aktifitas = 'Pendampingan Bumil'">
-                      <i class="bi bi-filetype-csv me-1"></i> Import Pendampingan
-                    </button>
-                    <button :class="aktifitas === 'Intervensi Bumil'?'btn btn-primary btn-sm':'btn btn-outline-primary btn-sm'" type="button"
-                      @click="isUploadOpen_bumil = !isUploadOpen_bumil; aktifitas = 'Intervensi Bumil'">
-                      <i class="bi bi-filetype-csv me-1"></i> Import Intervensi
-                    </button>
+                        <select v-if="role === 'Super Admin' " v-model="selectDesa_bumil"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Desa</option>
+                          <option v-for="desa in listKelurahan"
+                                  :key="desa.id"
+                                  :value="desa.kelurahan">
+                            {{ desa.label }}
+                          </option>
+                        </select>
+
+                        <select v-model="searchDate_bumil"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Periode</option>
+                          <option value="01">Januari</option>
+                          <option value="02">Februari</option>
+                          <option value="03">Maret</option>
+                          <option value="04">April</option>
+                          <option value="05">Mei</option>
+                          <option value="06">Juni</option>
+                          <option value="07">Juli</option>
+                          <option value="08">Agustus</option>
+                          <option value="09">September</option>
+                          <option value="10">Oktober</option>
+                          <option value="11">November</option>
+                          <option value="12">Desember</option>
+                        </select>
+
+                        <select v-model="searchYear_bumil"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Tahun</option>
+                          <option v-for="year in yearOptions"
+                                  :key="year"
+                                  :value="year">
+                            {{ year }}
+                          </option>
+                        </select>
+
+                      </div>
+                    </div>
+
+                    <!-- Search + Button -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+
+                        <input type="text" class="form-control form-control-sm" style="width: 220px;" placeholder="Ketik NIK atau Nama" v-model="searchQuery_bumil">
+
+                        <button :class="aktifitas === 'Pendampingan Bumil'?'btn btn-primary btn-sm':'btn btn-outline-primary btn-sm'" type="button"
+                          @click="isUploadOpen_bumil = !isUploadOpen_bumil; aktifitas = 'Pendampingan Bumil'">
+                          <i class="bi bi-filetype-csv me-1"></i> Import Pendampingan
+                        </button>
+                        <button :class="aktifitas === 'Intervensi Bumil'?'btn btn-primary btn-sm':'btn btn-outline-primary btn-sm'" type="button"
+                          @click="isUploadOpen_bumil = !isUploadOpen_bumil; aktifitas = 'Intervensi Bumil'">
+                          <i class="bi bi-filetype-csv me-1"></i> Import Intervensi
+                        </button>
+
+                      </div>
+                    </div>
+
                   </div>
                   <!-- Table -->
                   <div class="mt-3">
@@ -640,27 +746,27 @@
                   <!-- Preview / status -->
                   <div class="mt-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div v-if="filePreviewTable_catin.length" class="mt-3">
-                      <p class="fw-bold mb-1 text-danger">
+                      <p class="fw-bold mb-1 text-success">
                         *Preview:
                       </p>
                       <div class="table-responsive">
-                        <table class="table table-bordered table-sm border-danger" style="font-size: 80%;">
+                        <table class="table table-bordered table-sm border-success" style="font-size: 80%;">
                           <thead>
                             <tr>
                               <th v-for="(col, index) in PreviewTable_catin" :key="'h' + index" width="120"
-                                class="text-danger">
+                                class="text-success">
                                 {{ col }}
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="(row, rIndex) in filePreviewTable_catin.slice(0)" :key="'r' + rIndex">
-                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-danger">
+                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-success">
                                 {{ col }}
                               </td>
                             </tr>
                             <tr v-for="(row, rIndex) in filePreviewTable_catin.slice(1)" :key="'r' + rIndex">
-                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-danger">
+                              <td v-for="(col, cIndex) in row" :key="'c' + cIndex" class="text-success">
                                 ...
                               </td>
                             </tr>
@@ -673,7 +779,7 @@
                     <div v-else class="text-muted small">Belum ada file dipilih</div>
                   </div>
 
-                  <div v-if="fileError" class="mt-2 text-danger small">
+                  <div v-if="fileError" class="mt-2 text-success small">
                     {{ fileError }}
                   </div>
 
@@ -698,15 +804,69 @@
               <div class="card shadow-sm">
                 <div class="card-body">
                   <!-- Search + Button -->
-                  <div class="d-flex align-items-center justify-content-end gap-2">
-                    <input type="text" class="form-control form-control-sm" style="width: 220px;"
-                      placeholder="Ketik NIK atau Nama" v-model="searchQuery_catin">
+                  <div class="row g-2 align-items-end">
 
-                    <button :class="aktifitas === 'Pendampingan Catin'?'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
-                      @click="isUploadOpen_catin = !isUploadOpen_catin; aktifitas = 'Pendampingan Catin'">
-                      <i class="bi bi-filetype-csv me-1"></i> Import Pendampingan
-                    </button>
+                    <!-- Filter -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2">
+
+                        <select v-if="role === 'Super Admin'" v-model="selectDesa_catin"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Desa</option>
+                          <option v-for="desa in listKelurahan"
+                                  :key="desa.id"
+                                  :value="desa.kelurahan">
+                            {{ desa.label }}
+                          </option>
+                        </select>
+
+                        <select v-model="searchDate_catin"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Periode</option>
+                          <option value="01">Januari</option>
+                          <option value="02">Februari</option>
+                          <option value="03">Maret</option>
+                          <option value="04">April</option>
+                          <option value="05">Mei</option>
+                          <option value="06">Juni</option>
+                          <option value="07">Juli</option>
+                          <option value="08">Agustus</option>
+                          <option value="09">September</option>
+                          <option value="10">Oktober</option>
+                          <option value="11">November</option>
+                          <option value="12">Desember</option>
+                        </select>
+
+                        <select v-model="searchYear_catin"
+                                class="form-select form-select-sm w-auto">
+                          <option value="">Pilih Tahun</option>
+                          <option v-for="year in yearOptions"
+                                  :key="year"
+                                  :value="year">
+                            {{ year }}
+                          </option>
+                        </select>
+
+                      </div>
+                    </div>
+
+                    <!-- Search + Button -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+
+                        <input type="text" class="form-control form-control-sm" style="width: 220px;"
+                          placeholder="Ketik NIK atau Nama" v-model="searchQuery_catin">
+
+                        <button :class="aktifitas === 'Pendampingan Catin'?'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'" type="button"
+                          @click="isUploadOpen_catin = !isUploadOpen_catin; aktifitas = 'Pendampingan Catin'">
+                          <i class="bi bi-filetype-csv me-1"></i> Import Pendampingan
+                        </button>
+
+                      </div>
+                    </div>
+
                   </div>
+
                   <!-- Table -->
                   <div class="mt-3">
 
@@ -809,6 +969,8 @@ export default {
   components: { CopyRight, NavbarAdmin, HeaderAdmin, Welcome, EasyDataTable, },
   data() {
     return {
+      listKelurahan:[],
+      role:'',
       selectedIds_anak: [],      // ← ID terpilih
       selectAll_anak: false,     // ← checkbox header
       selectedIds_bumil: [],      // ← ID terpilih
@@ -887,6 +1049,12 @@ export default {
           align: 'center',
         },
         {
+          text: 'Tanggal Pendampingan',
+          value: 'tanggal_pendampingan',
+          sortable: true,
+          align: 'center',
+        },
+        {
           text: 'Nama Perempuan',
           value: 'nama_perempuan',
           sortable: true,
@@ -934,6 +1102,12 @@ export default {
           sortable: true,
           align: 'center',
         },
+        {
+          text: 'Desa',
+          value: 'desa',
+          sortable: true,
+          align: 'center',
+        },
         { text: 'Action', value: 'action', width: 120, align: "center", class: "col-action" },
       ],
       headers_bumil: [
@@ -947,7 +1121,8 @@ export default {
         { text: "Usia (Thn)", value: "usia_ibu", sortable: true, class: "align-middle text-center cursor-pointer" },
         { text: "HPL", value: "hpl", sortable: true, width:100 ,class: "align-middle text-center cursor-pointer" },
         { text: "Tgl Pendampingan", value: "tgl_pendampingan", sortable: true, width: 130, class: "align-middle text-center cursor-pointer" },
-        //{ text: "Intervensi", value: "intervensi", sortable: true, class: "align-middle text-center cursor-pointer" },
+        { text: "Tgl Intervensi", value: "intervensi", sortable: true, class: "align-middle text-center cursor-pointer" },
+        { text: "Desa", value: "desa", sortable: true, class: "align-middle text-center cursor-pointer" },
         { text: "Action", value: "action", width: 120, align: "center", class: "col-action" },
       ],
       headers_kunAn: [
@@ -959,15 +1134,27 @@ export default {
         { text: 'Tgl Lahir', value: 'tgl_lahir', sortable: true },
         { text: 'BB', value: 'bb', sortable: true },
         { text: 'TB', value: 'tb', sortable: true },
-        { text: 'Tgl Pengukuran Terakhir', value: 'tgl_pengukuran', sortable: true },
+        { text: 'Tgl Pengukuran', value: 'tgl_pengukuran', sortable: true },
         { text: 'Posyandu', value: 'unit_posyandu', sortable: true },
-        //{ text: 'Intervensi', value: 'intervensi', sortable: true },
+        { text: 'Tgl Pendampingan', value: 'pendampingan', sortable: true },
+        { text: 'Tgl Intervensi', value: 'intervensi', sortable: true },
+        { text: 'Desa', value: 'desa', width: 120, sortable: true },
         { text: 'Action', value: 'action', width: 120, align: "center", class: "col-action" },
       ],
       formOpen: false,
+      yearOptions: [],
       searchQuery_kunAn: "",
+      selectDesa_kunAn: "",
+      searchDate_kunAn: "",
+      searchYear_kunAn: "",
       searchQuery_bumil: "",
+      selectDesa_bumil: "",
+      searchDate_bumil: "",
+      searchYear_bumil: "",
       searchQuery_catin: "",
+      selectDesa_catin: "",
+      searchDate_catin: "",
+      searchYear_catin: "",
       currentPage: 1,
       perPage: 10,
       perPageOptions: [5, 10, 25, 50],
@@ -1012,7 +1199,14 @@ export default {
       PreviewTable_catin:[],
       filePreviewTable: [],
       filePreviewTable_catin: [],
-      filePreviewTable_bumil: []
+      filePreviewTable_bumil: [],
+      filters: {
+        provinsi: '',
+        kota: '',
+        kecamatan: '',
+        kelurahan: '',
+        idWilayah: ''
+      },
     }
   },
   created() {
@@ -1031,6 +1225,12 @@ export default {
     this.thisMonth = this.getThisMonth()
   },
   computed: {
+    /* role() {
+      return localStorage.getItem('role')
+    },
+    isAdmin() {
+      return this.role === 'Super Admin'
+    }, */
     exampleFile() {
       switch (this.aktifitas) {
         case "Kunjungan Posyandu":
@@ -1059,10 +1259,43 @@ export default {
         : Object.values(this.dataLoad);
 
       const q = this.searchQuery_kunAn?.toLowerCase()?.trim() ?? "";
+      const a = this.selectDesa_kunAn?.toLowerCase()?.trim() ?? "";
+      const m = this.searchDate_kunAn ?? "";
+      const y  = this.searchYear_kunAn ?? "";
 
       return arr.filter(item => {
+        /** 🔎 SEARCH (nama / nik) */
         const nama = item.nama?.toLowerCase() ?? "";
-        return nama.includes(q) || item.nik?.toString().includes(q);
+        const nik  = item.nik?.toString() ?? "";
+
+        const matchSearch = !q || nama.includes(q) || nik.includes(q);
+
+        /** 🏘️ DESA */
+        const desa = item.kelurahan?.toLowerCase().trim() ?? "";
+        const matchDesa = !a || desa === a;
+
+        /** 🏘️ Tanggal */
+        let matchDate = true;
+
+        if (m || y) {
+          if (!Array.isArray(item.posyandu) || !item.posyandu.length) {
+            return false;
+          }
+
+          const latestPosyandu = [...item.posyandu].sort(
+            (a, b) => new Date(b.tgl_ukur) - new Date(a.tgl_ukur)
+          )[0];
+
+          const tgl = latestPosyandu?.tgl_ukur;
+          if (!tgl) return false;
+
+          const [year, month] = tgl.split("-");
+
+          if (m && month != m) matchDate = false;
+          if (y && year != y) matchDate = false;
+        }
+
+        return matchSearch && matchDesa && matchDate;
       });
     },
 
@@ -1099,7 +1332,7 @@ export default {
           latestByNik[nik] = { ...item, latestPosyandu }
         }
       })
-      console.log('filteredAnak',this.filteredAnak);
+
       return Object.values(latestByNik)
         .sort((a, b) => a.id - b.id)
         .map(item => ({
@@ -1116,7 +1349,9 @@ export default {
           tgl_pengukuran: item.latestPosyandu?.tgl_ukur ?? "-",
           unit_posyandu: item.latestPosyandu?.posyandu ?? "-",
 
-          //intervensi: item.intervensi?.[0]?.jenis ?? "-",
+          intervensi: item.intervensi?.[0]?.tgl_intervensi ?? "-",
+          pendampingan: item.pendampingan?.[0]?.tanggal_pendampingan ?? "-",
+          desa: item.kelurahan ?? "-",
           action: { ...item }
         }))
     },
@@ -1131,10 +1366,39 @@ export default {
         : Object.values(this.dataLoad);
 
       const q = this.searchQuery_bumil?.toLowerCase()?.trim() ?? "";
+      const a = this.selectDesa_bumil?.toLowerCase()?.trim() ?? "";
+      const m = this.searchDate_bumil ?? "";
+      const y  = this.searchYear_bumil ?? "";
+
       return arr.filter(item => {
+        /** 🔎 SEARCH (nama / nik) */
         const nama = item.nama_ibu?.toLowerCase() ?? "";
-        return nama.includes(q) || item.nik_ibu?.toString().includes(q);
+        const nik  = item.nik_ibu?.toString() ?? "";
+
+        const matchSearch = !q || nama.includes(q) || nik.includes(q);
+
+        /** 🏘️ DESA */
+        const desa = item.kelurahan?.toLowerCase().trim() ?? "";
+        const matchDesa = !a || desa === a;
+
+        /** 📅 TANGGAL */
+        let matchDate = true;
+
+        if (m || y) {
+          const tgl = item.tanggal_pendampingan;
+          if (!tgl) return false;
+
+          const [year, month] = tgl.split("-");
+
+          if (m && month !== m) matchDate = false;
+          if (y && year != y) matchDate = false;
+
+          console.log({ tgl, m, y, month, year, matchDate });
+        }
+
+        return matchSearch && matchDesa && matchDate;
       });
+
     },
 
     items_bumil() {
@@ -1160,7 +1424,9 @@ export default {
         // ambil pemeriksaan TERBARU
         if (currentTgl && (!savedTgl || currentTgl > savedTgl)) {
           latestByNik[nik] = item
+          console.log('latest',latestByNik[nik]);
         }
+
       })
 
       return Object.values(latestByNik).map(item => ({
@@ -1170,15 +1436,16 @@ export default {
         nama_suami: item.nama_suami ?? "-",
         hpl: this.formatDate(item.hpl) ?? "-",
         kehamilan_ke: item.kehamilan_ke ?? "-",
-        kadar_hb: item.riwayat_pemeriksaan?.[0]?.kadar_hb ?? "-",
-        lila: item.riwayat_pemeriksaan?.[0]?.lila ?? "-",
+        kadar_hb: item.riwayat_pemeriksaan?.kadar_hb ?? "-",
+        lila: item.riwayat_pemeriksaan?.lila ?? "-",
         usia_ibu: item.usia_ibu ?? "-",
         usia_kehamilan: item.riwayat_pemeriksaan?.[0]?.usia_kehamilan_minggu ?? "-",
         bb: item.riwayat_pemeriksaan?.[0]?.berat_badan ?? "-",
         tb: item.riwayat_pemeriksaan?.[0]?.tinggi_badan ?? "-",
         tgl_pendampingan: this.formatDate(item.tanggal_pendampingan) ?? "-",
         jml_anak: item.jumlah_anak ?? 0,
-        //intervensi: item.intervensi?.[0]?.intervensi ?? "-",
+        desa: item.kelurahan,
+        intervensi: item.intervensi?.[0]?.tanggal ?? "-",
         action: { ...item }
       }))
     },
@@ -1194,25 +1461,40 @@ export default {
       // 🔒 FILTER WAJIB: buang null / undefined / bukan object
       arr = arr.filter(item => item && typeof item === "object");
 
-      if (this.searchQuery_catin) {
-        const q = this.searchQuery_catin.toLowerCase().trim();
+      //console.log('data:',arr[0].tgl_kunjungan);
+      const q = this.searchQuery_catin.toLowerCase().trim();
+      const a = this.selectDesa_catin?.toLowerCase()?.trim() ?? "";
+      const m = this.searchDate_catin ?? "";
+      const y  = this.searchYear_catin ?? "";
 
-        return arr.filter(item => {
-          const namaP = item.nama_perempuan?.toLowerCase() ?? "";
-          const namaL = item.nama_laki?.toLowerCase() ?? "";
-          const nikP = item.nik_perempuan ?? "";
-          const nikL = item.nik_laki ?? "";
+      return arr.filter(item => {
+        const namaP = item.nama_perempuan?.toLowerCase() ?? "";
+        const namaL = item.nama_laki?.toLowerCase() ?? "";
+        const nikP = item.nik_perempuan ?? "";
+        const nikL = item.nik_laki ?? "";
 
-          return (
-            namaP.includes(q) ||
-            namaL.includes(q) ||
-            nikP.includes(q) ||
-            nikL.includes(q)
-          );
-        });
-      }
+        const matchSearch = !q || namaP.includes(q) || namaL.includes(q) || nikP.includes(q) ||nikL.includes(q);
 
-      return arr;
+        /** 🏘️ DESA */
+        const desa = item.kelurahan?.toLowerCase().trim() ?? "";
+        const matchDesa = !a || desa === a;
+
+        /** 🏘️ Tanggal */
+        let matchDate = true;
+
+        if (m || y) {
+          if (!item.tgl_kunjungan) return false;
+
+          const [year, monthRaw] = item.tgl_kunjungan.split("-");
+          const month = monthRaw.padStart(2, "0");
+
+          if (m && month !== m) matchDate = false;
+          if (y && year != y) matchDate = false;
+        }
+
+        return matchSearch && matchDesa && matchDate;
+      });
+
     },
 
     items_catin() {
@@ -1235,18 +1517,24 @@ export default {
 
       return unique.map(item => {
         const pemeriksaan = item.riwayat_pemeriksaan?.[0] ?? null
+        const pendampingan = item.riwayat_pendampingan?.[0] ?? null
 
         return {
           nik: item.nik_perempuan ?? "-",
-          nik_laki: item.nik_laki ?? "-",
           nama_perempuan: item.nama_perempuan ?? "-",
           nama_laki: item.nama_laki ?? "-",
           usia_perempuan: item.usia_perempuan ?? "-",
-          usia_laki: item.usia_laki ?? "-",
           bb: pemeriksaan?.berat_perempuan ?? "-",
           tb: pemeriksaan?.tinggi_perempuan ?? "-",
           hb_perempuan: pemeriksaan?.hb_perempuan ?? "-",
           lila_perempuan: pemeriksaan?.lila_perempuan ?? "-",
+          desa: item.kelurahan ?? "-",
+
+          // 🔑 RAW DATE (buat filter)
+          tanggal_pendampingan_raw: pendampingan?.tanggal_pendampingan ?? null,
+
+          // 🎨 DISPLAY DATE (buat tabel)
+          tanggal_pendampingan: this.formatDate(pendampingan?.tanggal_pendampingan) ?? "-",
 
           tanggal_menikah: this.formatDate(item.tgl_pernikahan) ?? "-",
           action: { ...item }
@@ -1254,9 +1542,46 @@ export default {
       })
     }
 
-
   },
   methods: {
+    async getWilayahUser() {
+      try {
+        const res = await axios.get(`${baseURL}/api/user/region`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        })
+        const wilayah = res.data
+        this.filters.idWilayah = wilayah.id_wilayah
+        this.filters.provinsi = wilayah.provinsi
+        this.filters.kota = wilayah.kota
+        this.filters.kecamatan = wilayah.kecamatan
+        this.filters.kelurahan = wilayah.kelurahan
+        //console.log('✅ getWilayahUser ->', this.filters)
+      } catch (e) {
+        console.error('❌ getWilayahUser error:', e)
+        this.kelurahan = '-'
+      }
+    },
+    async loadRegion() {
+      const res = await axios.get(
+        `${baseURL}/api/region`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      )
+
+      this.listKelurahan = res.data.data
+      .flatMap(item => item.options || [])
+      .map(opt => ({
+        id: opt.id,
+        kelurahan: opt.kelurahan,
+        label: opt.label,
+        kecamatan: opt.kecamatan,
+        kota: opt.kota,
+        provinsi: opt.provinsi,
+      }));
+    },
     toggleSelectAll() {
       //console.log(this.items);
       switch (this.activeMenu) {
@@ -1426,36 +1751,6 @@ export default {
       const [day, month, year] = date.split('-')
       return `${year}-${month}-${day}`
     },
-    /* async finishImport(message) {
-      // pastikan progress mentok
-      this.importProgress = 100
-
-      // animasi ke 100
-      await new Promise(resolve => {
-        const interval = setInterval(() => {
-          if (this.animatedProgress >= 100) {
-            clearInterval(interval)
-            resolve()
-          } else {
-            this.animatedProgress += 5
-          }
-        }, 30)
-      })
-
-      // matikan loading
-      this.isLoadingImport = false
-
-      // tampilkan success SETELAH loading mati
-      Swal.fire({
-        icon: 'success',
-        text: message,
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'btn btn-primary mx-1',
-          cancelButton: 'btn btn-outline-secondary mx-1'
-        }
-      })
-    }, */
     handleFileChange(e) {
       const file = e.target.files[0]
       this.loadFilePreview(file)
@@ -2450,14 +2745,24 @@ export default {
         ['B', 'kB', 'MB', 'GB', 'TB'][i]
       )
     },
-
     async loadFilePreview(file) {
       if (!file) return
 
       const ext = file.name.split('.').pop().toLowerCase()
 
-      if (!['csv', 'xlsx', 'xls'].includes(ext)) {
-        this.fileError = 'Hanya file CSV atau Excel (XLS/XLSX) yang diperbolehkan.'
+      //if (!['csv', 'xlsx', 'xls'].includes(ext)) {
+      if (!['csv'].includes(ext)) {
+        Swal.fire({
+          title: 'Error',
+          html: 'Periksa format file. Pastikan berformat CSV',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: 'btn btn-danger mx-1',
+          }
+        })
+        //this.fileError = 'Hanya file CSV atau Excel (XLS/XLSX) yang diperbolehkan.'
         return
       }
 
@@ -2551,18 +2856,18 @@ export default {
         var payload;
         switch (this.activeMenu) {
           case 'anak':
-            res = await axios.get(`${baseURL}/api/children`, { headers });
+            res = await axios.get(`${baseURL}/api/children`, { headers,params: this.filters });
             payload = res.data.data_anak ?? {};
             this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload);
             break;
           case 'bumil':
-            res = await axios.get(`${baseURL}/api/pregnancy`, { headers });
+            res = await axios.get(`${baseURL}/api/pregnancy`, { headers,params: this.filters });
             payload = res.data?.data || [];
             this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload);
             break;
 
           case 'catin':
-            res = await axios.get(`${baseURL}/api/bride`, { headers });
+            res = await axios.get(`${baseURL}/api/bride`, { headers,params: this.filters });
             payload = res.data ?? {};
             this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload);
             break;
@@ -2595,14 +2900,24 @@ export default {
   async mounted() {
     this.isLoading = true
     try {
-      await Promise.all([
-        this.loadConfigWithCache(),
-        this.loadData(),
-        //this.getWilayahUser(),
-        this.handleResize(),
+      this.role = localStorage.getItem('role')
 
-        window.addEventListener('resize', this.handleResize)
-      ])
+      const currentYear = new Date().getFullYear()
+      this.yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - i)
+
+      await this.loadConfigWithCache()
+
+      if (this.role === "Super Admin") {
+        await this.loadRegion()
+      } else {
+        await this.getWilayahUser() // ⬅️ ini WAJIB selesai dulu
+      }
+
+      await this.loadData() // ⬅️ baru load data setelah filter siap
+
+      this.handleResize()
+      window.addEventListener('resize', this.handleResize)
+
     } catch (err) {
       console.error('Error loading data:', err)
     } finally {
@@ -2616,6 +2931,30 @@ export default {
 </script>
 
 <style scoped>
+.table-responsive {
+  overflow-x: auto;
+  scrollbar-width: thick; /* Firefox */
+}
+
+/* WebKit */
+.table-responsive::-webkit-scrollbar {
+  height: 50px !important; /* INI ukuran scrollbar horizontal */
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
 .table-scroll-x {
   overflow-x: auto !important;
   overflow-y: hidden !important;

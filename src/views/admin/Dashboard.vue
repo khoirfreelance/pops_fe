@@ -2144,6 +2144,7 @@ import { eventBus } from '@/eventBus'
 
 const baseURL = 'https://datapops.id/apps/public'
 
+
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 Chart.register(PieController, ArcElement, Tooltip, Legend, ChartDataLabels)
 Chart.register(
@@ -2958,11 +2959,10 @@ export default {
     },
     async fetchStats() {
       try {
-        const res = await axios.get(`${baseURL}/api/dashboard/stats`, {
+        const res = await axios.get(`${baseURL}/api/dashboard/stats/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         })
         const data = res.data
-
         this.stats = [
           { title: 'RW', value: data.rw, icon: 'bi bi-houses-fill' },
           { title: 'RT', value: data.rt, icon: 'bi bi-house-fill' },

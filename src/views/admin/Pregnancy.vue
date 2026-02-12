@@ -933,7 +933,7 @@ export default {
         { text: 'RW', value: 'rw', sortable: true, width: 80 },
         { text: 'RT', value: 'rt', sortable: true, width: 80 },
         { text: 'Usia (Tahun)', value: 'usia', sortable: true, width: 100 },
-        { text: 'Tanggal Pemeriksaan', value: 'tanggal_pemeriksaan_terakhir', sortable: true, width: 150 }
+        { text: 'Tanggal Pendampingan', value: 'tanggal_pemeriksaan_terakhir', sortable: true, width: 150 }
       ],
       periodeTitle: '',
       isLoading: true,
@@ -988,8 +988,8 @@ export default {
 
     const applySearch = () => {
       const query = searchQuery.value.toLowerCase()
-      console.log(" Searching for:", query);
-      console.log("Bumil Value:", window);
+      //console.log(" Searching for:", query);
+      //console.log("Bumil Value:", window);
 
 
       filteredData.value = window.bumil.filter((c) =>
@@ -1207,7 +1207,7 @@ export default {
           },
         }
       )
-      console.log('loadRegion');
+      //console.log('loadRegion');
 
       this.listKelurahan = res.data.data || []
     },
@@ -1239,7 +1239,7 @@ export default {
       } else {
         fileNameExport = `Status Risiko Ibu Hamil Desa ${this.desaExportData} ${this.periodeAwalExportData} - ${this.periodeAkhirExportData}.xlsx`;
       }
-      console.log(this.filteredData);
+      //console.log(this.filteredData);
 
       const excelData = mapDataIbuHamilToExcel(this.filteredData);
       const filterSheetData = mapFilterToExcel(this.filters, 'Bumil')
@@ -1267,7 +1267,6 @@ export default {
         if(e) return tanggal
       }
     },
-
     downloadRiwayat() {
       if (!this.selectedBumil) {
         alert('Silakan pilih ibu hamil terlebih dahulu.')
@@ -1374,11 +1373,12 @@ export default {
         })
 
         const data = res.data?.data || []
+        console.log('data:',data );
 
         // ✅ Ambil semua nama posyandu dari seluruh riwayat_pemeriksaan
-        const allPosyandu = data.flatMap((ibu) =>
-          (ibu.riwayat_pemeriksaan || []).map((r) => r.posyandu).filter(Boolean),
-        )
+        const allPosyandu = data
+          .map((ibu) => ibu.riwayat_pemeriksaan?.posyandu)
+          .filter(Boolean)
 
         // ✅ Buat list unik
         const uniquePosyandu = [...new Set(allPosyandu)]
@@ -1391,8 +1391,9 @@ export default {
 
         // ✅ Format data bumil
         this.bumil = data.map((item) => {
-          const lastCheck = item.riwayat_pemeriksaan?.at(-1) // pemeriksaan terakhir
-          const intervensi = item.intervensi?.at(-1) // intervensi terakhir
+          const lastCheck = item.riwayat_pemeriksaan
+          const intervensi = item.intervensi?.at(-1)
+
           return {
             id: item.nik_ibu,
             nama: item.nama_ibu || '-',
@@ -1401,30 +1402,26 @@ export default {
             risiko: item.status_risiko_usia || '-',
             rw: item.rw || '-',
             rt: item.rt || '-',
-
-            tanggal_pemeriksaan_terakhir: lastCheck?.tanggal_pemeriksaan_terakhir || '-',
+            //tanggal_pemeriksaan_terakhir: lastCheck?.tanggal_pemeriksaan_terakhir || '-',
+            tanggal_pemeriksaan_terakhir: item.tanggal_pendampingan || '-',
             berat_badan: lastCheck?.berat_badan || '-',
             tinggi_badan: lastCheck?.tinggi_badan || '-',
             imt: lastCheck?.imt || '-',
             kadar_hb: lastCheck?.kadar_hb || '-',
             lila: lastCheck?.lila || '-',
-            anemia: lastCheck?.status_gizi_hb || '-',
-            kek: lastCheck?.status_gizi_lila || '-',
+            anemia: item.status_gizi_hb || '-',
+            kek: item.status_gizi_lila || '-',
             posyandu: lastCheck?.posyandu || '-',
-            intervensi: intervensi?.intervensi || '-',
+            intervensi: intervensi?.intervensi || 'Belum Mendapatkan Intervensi',
           }
         })
-
-        //console.log(this.bumil);
 
         // ✅ Set filtered dan total
         this.filteredData = [...this.bumil]
         this.totalBumil = this.bumil.length
 
-        const total = res.data.total || 0
+        const total = res.data.counts?.find(c => c.title === 'Total Ibu Hamil')?.value || 0
 
-        //this.totalBumil = total;
-        //console.log('Total bumil:', res)
         this.kesehatan = res.data.counts.map((item) => ({
           title: item.title,
           value: item.value,
@@ -1449,8 +1446,9 @@ export default {
       try {
         this.isLoading = true
 
+        // eslint-disable-next-line no-unused-vars
         const dataRaw = this.dataRaw.find((item) => item.nik_ibu == bumil.id)
-        console.log('detail:', dataRaw, bumil.id);
+        //console.log('detail:', dataRaw, bumil.id);
 
         const nik = bumil.id
 
@@ -1461,6 +1459,8 @@ export default {
         // Ambil riwayat kehamilan
         const riwayatKehamilan = data.kehamilan || []
 
+        //const riwayatIntervensi = data.riwayat_intervensi || []
+
         // Ambil record terakhir
         const lastKehamilan = riwayatKehamilan.length
           ? riwayatKehamilan[riwayatKehamilan.length - 1]
@@ -1469,10 +1469,12 @@ export default {
         this.selectedBumil = {
           ...data.ibu,
           riwayat_pemeriksaan: data.riwayat_pemeriksaan || [],
-          riwayat_intervensi: dataRaw.intervensi || [],
+          riwayat_intervensi: data.riwayat_intervensi || [],
           kehamilan: data.kehamilan || [],
           risiko: lastKehamilan.risiko || '-', // ← ini tambahan
         }
+        //console.log('selected',this.selectedBumil);
+
 
         // tunggu DOM ter-render
         await nextTick()
@@ -1527,17 +1529,28 @@ export default {
       }
     },
     async resetFilter() {
-      Object.keys(this.filters).forEach((k) => {
-        if (Array.isArray(this.filters[k])) this.filters[k] = []
-        else this.filters[k] = ''
-      });
-      (await this.loadPregnancy(),await this.getWilayahUser()),
+      this.isLoading = true;
+      if (this.role === "Super Admin") {
+        this.filters.provinsi =''
+        this.filters.kota = ''
+        this.filters.kecamatan = ''
+        this.filters.kelurahan = ''
+        this.filters.kelurahan_id = ''
         this.kelurahan = 'Semua Desa'
         localStorage.removeItem('userWilayah')
-        //localStorage.setItem('kelurahan_label', this.kelurahan)
         localStorage.removeItem('kelurahan_label')
-
         eventBus.emit('kelurahanChanged', null)
+      }
+      this.filters.posyandu= '',
+      this.filters.rt = '',
+      this.filters.rw = '',
+      this.filters.status = [],
+      this.filters.usia = [],
+      this.filters.intervensi = [],
+      this.filters.periodeAwal = '',
+      this.filters.periodeAkhir = '',
+      this.loadPregnancy(),
+      this.isLoading = false
     },
     toggleSidebar() {
       this.isCollapsed = !this.isCollapsed
@@ -1675,32 +1688,46 @@ export default {
   },
   async mounted() {
     this.isLoading = true
+
     try {
+      // ===============================
+      // 1. Load wilayah dulu (wajib)
+      // ===============================
       if (this.isAdmin) {
         await this.loadRegion()
         this.kelurahan = 'Semua Desa'
-      }else{
+      } else {
         await this.getWilayahUser()
-        this.kelurahan = 'Desa '+ this.filters.kelurahan
-        console.log('nama'+this.kelurahan);
 
         const label = this.filters.kelurahan
+        this.kelurahan = 'Desa ' + label
+
         localStorage.setItem('kelurahan_label', label)
         eventBus.emit('kelurahanChanged', label)
       }
 
-      await this.loadPregnancy() // kasih await juga kalau ini async
+      // ===============================
+      // 2. Jalankan proses berat barengan
+      // ===============================
+      await this.loadPregnancy(),
+      /* await Promise.all([
+        this.loadPregnancy(),
+      ]) */
+
+      // ===============================
+      // 3. Proses ringan (tidak perlu await)
+      // ===============================
       this.periodeTitle = this.periodeLabel
       this.generatePeriodeOptions()
+      this.filteredBumil = this.bumil
+
       this.handleResize()
       window.addEventListener('resize', this.handleResize)
-      this.filteredBumil = this.bumil
+
     } catch (err) {
       console.error('Error loading data:', err)
     } finally {
-      setTimeout(() => {
-        this.isLoading = false
-      }, 300)
+      this.isLoading = false
     }
   },
   beforeUnmount() {
