@@ -134,7 +134,7 @@ export default {
           })
           //console.log('berhasil masuk');
 
-          this.router.push(`${baseURL}/admin`)
+          this.router.push(`/admin`)
         } else {
           Swal.fire({
             title: 'Login Gagal!',

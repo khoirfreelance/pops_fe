@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  base: '/apps/', // WAJIB sesuai folder di htdocs
+  base: '/', // WAJIB sesuai folder di htdocs
   plugins: [
     vue(),
   ],
