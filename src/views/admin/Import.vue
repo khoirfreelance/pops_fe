@@ -365,19 +365,19 @@
                     >
                       <option value="">-- Pilih Aksi --</option>
                       <option value="kunjungan_anak">
-                        Hapus Data Kunjungan Anak ({{ selectedIds_anak.length }})
+                        Hapus Data Kunjungan Anak
                       </option>
                       <!-- <option :disabled="!selectedIds_pend_anak" value="pendampingan_anak"> -->
-                      <option value="pendampingan_anak">
-                        Hapus Data Pendampingan Anak ({{ selectedIds_pend_anak }})
+                      <option value="pendampingan_anak" :disabled="selectedIds_pend_anak < 1">
+                        Hapus Data Pendampingan Anak
                       </option>
                       <!-- <option :disabled="!selectedIds_intv_anak" value="intervensi_anak"> -->
-                      <option value="intervensi_anak">
-                        Hapus Data Intervensi Anak ({{ selectedIds_intv_anak }})
+                      <option value="intervensi_anak" :disabled="selectedIds_intv_anak < 1">
+                        Hapus Data Intervensi Anak
                       </option>
-                      <option value="data_anak">
-                        Hapus Data Anak ({{ selectedIds_anak.length }})
-                      </option>
+                      <!-- <option value="data_anak">
+                        Hapus semua data anak {{ filters.periodeAwal }}
+                      </option> -->
                     </select>
 
                     <!-- <button
@@ -692,14 +692,14 @@
                     >
                       <option value="">-- Pilih Aksi --</option>
                       <option value="pendampingan_bumil">
-                        Hapus Data Pendampingan Bumil ({{ selectedIds_bumil.length }})
+                        Hapus Data Pendampingan Bumil
                       </option>
                       <option :disabled="!selectedIds_intv_bumil" value="intervensi_bumil">
-                        Hapus Data Intervensi Bumil ({{ selectedIds_intv_bumil }})
+                        Hapus Data Intervensi Bumil
                       </option>
-                      <option value="data_bumil">
-                        Hapus Data Bumil ({{ selectedIds_bumil.length }})
-                      </option>
+                      <!-- <option value="data_bumil">
+                        Hapus semua data bumil
+                      </option> -->
                     </select>
                     <!-- <button
                         class="btn btn-danger btn-sm mt-2"
@@ -1021,7 +1021,7 @@
                         @click="bulkDelete"
                       >
                         <i class="bi bi-trash"></i>
-                        Hapus ({{ selectedIds_catin.length }})
+                        Hapus
                       </button>
                   </div>
 
@@ -1071,6 +1071,7 @@ export default {
   components: { CopyRight, NavbarAdmin, HeaderAdmin, Welcome, EasyDataTable, },
   data() {
     return {
+      selectedMonth:'pada bulan terakhir',
       bulkAnak:'',
       bulkBumil:'',
       bulkCatin:'',
@@ -1692,9 +1693,13 @@ export default {
       try {
 
         // 🔥 generate periode range dulu
+        this.selectedIds_anak = []
+        this.selectedIds_bumil = []
+        this.selectedIds_catin = []
         this.setPeriodeRange()
-
         await this.loadData()
+        this.selectedMonth = this.filters.periodeAwal != '' ? this.filters.periodeAwal : this.selectedMonth
+
       } finally {
         this.isLoading = false
       }
@@ -1853,9 +1858,12 @@ export default {
 
           const selectedSet = new Set(this.selectedIds_anak)
 
+          //console.log(selectedSet);
+
           const selectedFullData = this.items_kunAn.filter(item =>
             selectedSet.has(item.nik)
           )
+          console.log(selectedFullData);
 
           const isValid = val =>
             typeof val === 'string' &&
@@ -1930,6 +1938,8 @@ export default {
       let url = ''
       let ids = []
       let extraPayload = {}
+      let type = ''
+      let length = 0
 
       switch (this.activeMenu) {
         case 'anak':
@@ -1938,6 +1948,26 @@ export default {
           ids = this.selectedIds_anak
           extraPayload.bulk_type = this.bulkAnak
           extraPayload.filters = this.filters
+
+          switch (this.bulkAnak) {
+            case 'kunjungan_anak':
+              type = 'Kunjungan Anak'
+              length = ids.length
+              break;
+            case 'pendampingan_anak':
+              type = 'Pendampingan Anak'
+              length = this.selectedIds_pend_anak
+              break;
+            case 'intervensi_anak':
+              type = 'Intervensi Anak'
+              length = this.selectedIds_intv_anak
+              break;
+
+            default:
+              type = 'Data Anak'
+              length = ids.length
+              break;
+          }
           break
 
         case 'bumil':
@@ -1946,23 +1976,42 @@ export default {
           ids = this.selectedIds_bumil
           extraPayload.bulk_type = this.bulkBumil
           extraPayload.filters = this.filters
+
+          switch (this.bulkBumil) {
+            case 'pendampingan_bumil':
+              type = 'Pendampingan Ibu Hamil'
+              length = ids.length
+              break;
+            case 'intervensi_bumil':
+              type = 'Intervensi Ibu Hamil'
+              length = this.selectedIds_intv_bumil
+              break;
+
+            default:
+              type = 'Data Ibu Hamil'
+              length = ids.length
+              break;
+          }
           break
 
         case 'catin':
           if (!this.selectedIds_catin.length) return
           url = 'bride'
           ids = this.selectedIds_catin
+          extraPayload.filters = this.filters
+          type = 'Pendampingan Calon Pengantin'
+          length = ids.length
           break
 
         default:
           return
       }
 
-      const length = ids.length
+      //const length = ids.length
 
       const confirm = await Swal.fire({
         title: 'Konfirmasi',
-        html: `Yakin ingin menghapus <b>${length}</b> data ${this.activeMenu}?`,
+        html: `Yakin ingin menghapus <b>${length}</b> data ${type} <b>${this.selectedMonth}</b>?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Ya, Hapus',
@@ -2749,15 +2798,12 @@ export default {
     async menu(type) {
       this.isLoading = true
       try {
+        this.closeAllPanels,
+        this.isUploadOpen = false,
+        this.isUploadOpen_bumil = false,
+        this.isUploadOpen_catin = false,
+        this.activeMenu = type,
         await Promise.all([
-          //this.closeAllPanels({ resetForm: true, resetFile: true })
-          this.closeAllPanels,
-          this.isUploadOpen = false,
-          this.isUploadOpen_bumil = false,
-          this.isUploadOpen_catin = false,
-          //this.resetForm = true,
-          //this.resetFile = true,
-          this.activeMenu = type,
           this.loadData()
         ])
       } catch (err) {
