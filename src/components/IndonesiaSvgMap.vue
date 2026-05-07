@@ -213,7 +213,7 @@
           </div>
         </div>
 
-        <div class="tooltip-highlight">
+        <!-- <div class="tooltip-highlight">
           <template v-for="(val, key) in tooltip.data" :key="key">
             <div
               v-if="key && key.toLowerCase() !== 'kota'"
@@ -223,7 +223,7 @@
               <span class="metric-value">{{ val }}</span>
             </div>
           </template>
-        </div>
+        </div> -->
 
 
         <!-- CONTROLS -->
