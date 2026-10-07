@@ -53,6 +53,14 @@
                   Calon Pengantin
                 </button>
               </li>
+
+              <li class="nav-item flex-fill text-center" role="presentation">
+                <button class="nav-link w-100 text-truncate" id="catin-tab" data-bs-toggle="tab"
+                  data-bs-target="#stat-tab-pane" type="button" role="tab" aria-controls="stat-tab-pane"
+                  aria-selected="false" @click="menu('stat')">
+                  <i class="fa fa-area-chart" aria-hidden="true"></i>
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -1028,6 +1036,140 @@
                 </div>
               </div>
             </div>
+
+            <!-- Statistik -->
+            <div class="tab-pane fade" id="stat-tab-pane" role="tabpanel" tabindex="0">
+              <div v-if="formOpen_stat" class="card p-3 my-3" id="form_stat">
+                <div class="d-flex justify-content-between">
+                  <h3>Form Statistik Desa</h3>
+                  <button class="btn btn-outline-danger" @click="closeAllPanels({ resetForm: true, resetFile: true })">
+                    X
+                  </button>
+                </div>
+                <div class="row g-2">
+                  <div class="col-md-12">
+                    <label>Desa</label>
+                    <select
+                      class="form-select"
+                      v-if="role === 'Super Admin'"
+                      v-model="form_stat.id_wilayah"
+                      :disabled="form_stat.mode === 'update'"
+                    >
+                      <option value="">Pilih Desa</option>
+                      <option v-for="desa in listKelurahan" :key="desa.id" :value="desa.id">
+                        {{ desa.label }}
+                      </option>
+                    </select>
+                    <input v-else type="text" class="form-control" :value="kelurahan" disabled>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label>Jumlah RT</label>
+                    <input type="number" min="0" class="form-control" v-model.number="form_stat.rt">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label>Jumlah RW</label>
+                    <input type="number" min="0" class="form-control" v-model.number="form_stat.rw">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label>Jumlah Keluarga Terdaftar</label>
+                    <input type="number" min="0" class="form-control" v-model.number="form_stat.keluarga">
+                  </div>
+
+                  <div class="col-12">
+                    <button class="btn btn-primary mt-3" @click="submitUpdate">
+                      <i class="bi bi-pencil-square"></i> Simpan
+                    </button>
+                    <button class="btn btn-secondary mt-3 ms-2" @click="resetForm">
+                      <i class="bi bi-arrow-clockwise"></i> Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <!-- Search + Button -->
+                  <div class="row g-2 align-items-end">
+
+                    <!-- Filter -->
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2">
+
+                        <select
+                          class="form-select form-select-sm w-auto"
+                          v-if="role === 'Super Admin' "
+                          v-model="filters.kelurahan"
+                          @change="handleRegionChange"
+                        >
+                          <option value="">Pilih Desa</option>
+                          <option v-for="desa in listKelurahan"
+                                  :key="desa.id"
+                                  :value="desa.kelurahan">
+                            {{ desa.label }}
+                          </option>
+                        </select>
+
+                        <button v-if="role === 'Super Admin' " @click="applyFilter()" class="btn btn-gradient btn-sm">
+                          Terapkan
+                        </button>
+
+                      </div>
+                    </div>
+
+                    <!-- Search + Button -->
+                    <!-- <div class="col-lg-6 col-12">
+                      <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+
+                        <input type="text" class="form-control form-control-sm" style="width: 220px;"
+                          placeholder="Ketik Nama Desa" v-model="searchQuery_stat">
+
+                      </div>
+                    </div> -->
+
+                  </div>
+
+                  <!-- Table -->
+                  <div class="mt-3">
+
+                    <!-- Search + Row Per Page -->
+                    <easy-data-table :headers="headers_stat" :items="items_stat" :sortable="true"
+                      :rows-per-page="perPage" :rows-items="perPageOptions"
+                      :rows-per-page-text="'Rows per page'" header-text-direction="center"
+                      table-class-name="my-custom-table" header-class-name="my-custom-header" alternating
+                      border-cell>
+
+                      <!-- <template #item-select="{ desa }">
+                        <div class="text-center">
+                          <input
+                            type="checkbox"
+                            :value="desa"
+                            v-model="selectedIds_desa"
+                            @change="syncSelectAll"
+                          />
+                        </div>
+                      </template> -->
+
+                      <template #item-action="items">
+                        <div class="action-wrapper d-flex gap-1 m-1 text-center">
+                          <button @click="editItem(items)" class="btn btn-secondary" data-bs-toggle="tooltip"
+                            title="Ubah">
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                          <button @click="delItem(items)" class="btn btn-danger" data-bs-toggle="tooltip" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </template>
+
+                    </easy-data-table>
+                  </div>
+
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -1063,7 +1205,14 @@ import 'vue3-easy-data-table/dist/style.css'
 import * as XLSX from 'xlsx'
 import Swal from 'sweetalert2'
 
-const baseURL = 'https://datapops.id/apps/public'
+// PORT backend kamu
+const API_PORT = 8000;
+
+// Bangun base URL dari window.location
+const { protocol, hostname } = window.location;
+// contoh hasil: "http://192.168.0.5:8000"
+const baseURL = `${protocol}//${hostname}:${API_PORT}`;
+// inisialisasi DataTables agar pakai styling Bootstrap 5
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -1147,6 +1296,16 @@ export default {
         tinggi_perempuan: "",
         lika_perempuan: "",
         tanggal_menikah:"",
+      },
+      formOpen_stat: false,
+      selectedIds_desa: [],
+      dataLoad_stat: [],
+      form_stat: {
+        id_wilayah: '',
+        mode: '',
+        rt: '',
+        rw: '',
+        keluarga: '',
       },
       sortKey: '',
       sortOrder: 'asc',
@@ -1251,6 +1410,14 @@ export default {
         { text: 'Desa', value: 'desa', width: 120, sortable: true },
         { text: 'Action', value: 'action', width: 120, align: "center", class: "col-action" },
       ],
+      headers_stat: [
+        //{ text: '', value: 'select', width: 50 },
+        { text: 'Desa', value: 'desa', width: 200, sortable: true },
+        { text: 'RT', value: 'rt', sortable: true },
+        { text: 'RW', value: 'rw', sortable: true },
+        { text: 'Keluarga Terdaftar', value: 'keluarga', sortable: true },
+        { text: 'Action', value: 'action', width: 120, align: "center", class: "col-action" },
+      ],
       formOpen: false,
       yearOptions: [],
       searchQuery_kunAn: "",
@@ -1338,12 +1505,7 @@ export default {
     this.thisMonth = this.getThisMonth()
   },
   computed: {
-    /* role() {
-      return localStorage.getItem('role')
-    },
-    isAdmin() {
-      return this.role === 'Super Admin'
-    }, */
+
     exampleFile() {
       switch (this.aktifitas) {
         case "Kunjungan Posyandu":
@@ -1654,10 +1816,41 @@ export default {
           action: { ...item }
         }
       })
+    },
+
+    items_stat() {
+    console.log(this.dataLoad_stat);
+
+      return this.dataLoad_stat.map(item => ({
+        id_wilayah: item.id_wilayah,
+        desa: item.desa ?? '-',
+        rt: item.rt ?? 0,
+        rw: item.rw ?? 0,
+        keluarga: item.keluarga ?? 0,
+        action: { ...item },
+      }))
     }
 
   },
   methods: {
+    handleRegionChange() {
+      const selected = this.listKelurahan.find(
+        (w) => w.kelurahan === this.filters.kelurahan
+      )
+
+      if (!selected) {
+        this.filters.provinsi = ''
+        this.filters.kota = ''
+        this.filters.kecamatan = ''
+        this.filters.idWilayah = ''
+        return
+      }
+
+      this.filters.provinsi = selected.provinsi
+      this.filters.kota = selected.kota
+      this.filters.kecamatan = selected.kecamatan
+      this.filters.idWilayah = selected.id
+    },
     setPeriodeRange() {
       if (!this.periode) {
         this.filters.periodeAwal = ''
@@ -1744,32 +1937,45 @@ export default {
         this.filters.kota = wilayah.kota
         this.filters.kecamatan = wilayah.kecamatan
         this.filters.kelurahan = wilayah.kelurahan
-        //console.log('✅ getWilayahUser ->', this.filters)
+
+        // 🔥 TAMBAHAN: isi label desa untuk admin desa
+        this.kelurahan = wilayah.kelurahan
       } catch (e) {
         console.error('❌ getWilayahUser error:', e)
         this.kelurahan = '-'
       }
     },
     async loadRegion() {
-      const res = await axios.get(
-        `${baseURL}/api/region`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      )
+      const res = await axios.get(`${baseURL}/api/region`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      })
 
-      this.listKelurahan = res.data.data
-      .flatMap(item => item.options || [])
-      .map(opt => ({
-        id: opt.id,
-        kelurahan: opt.kelurahan,
-        label: opt.label,
-        kecamatan: opt.kecamatan,
-        kota: opt.kota,
-        provinsi: opt.provinsi,
-      }));
+      const options = res.data.data
+        .flatMap(item => item.options || [])
+        // buang kelurahan null / kosong
+        .filter(opt => opt.kelurahan && opt.kelurahan.trim() !== '')
+        // urutkan id kecil dulu, supaya "yang paling atas" yang dipakai
+        .sort((a, b) => Number(a.id) - Number(b.id))
+
+      const seen = new Map()
+      options.forEach(opt => {
+        const key = opt.kelurahan.trim().toUpperCase()
+        if (!seen.has(key)) {
+          seen.set(key, {
+            id: opt.id,
+            kelurahan: opt.kelurahan,
+            label: opt.label,
+            kecamatan: opt.kecamatan,
+            kota: opt.kota,
+            provinsi: opt.provinsi,
+          })
+        }
+      })
+
+      // tampilkan urut abjad di dropdown
+      this.listKelurahan = [...seen.values()].sort((a, b) =>
+        a.label.localeCompare(b.label)
+      )
     },
     toggleSelectAll() {
       //console.log(this.items);
@@ -2150,6 +2356,9 @@ export default {
           case 'catin':
             formId = 'form_catin'
             break
+          case 'stat':
+            formId = 'form_stat';
+            break
         }
 
         if (formId) {
@@ -2217,7 +2426,18 @@ export default {
             usia_laki: item.usia_laki ?? null,
           };
           break;
-        default:
+        case 'stat':
+          this.formOpen_stat = true
+          this.form_stat = {
+            mode: 'update',
+            id_wilayah: item.id_wilayah,
+            rt: item.rt ?? 0,
+            rw: item.rw ?? 0,
+            keluarga: item.keluarga ?? 0,
+          }
+          break;
+
+          default:
           return;
       }
       this.scrollToForm()
@@ -2616,6 +2836,59 @@ export default {
 
             }
             break;
+          case 'stat': {
+            if (!this.form_stat.id_wilayah) {
+              this.isLoadingImport = false
+              Swal.fire({ title: 'Error', text: 'Pilih desa terlebih dahulu', icon: 'error' })
+              return
+            }
+
+            const idPetugas = localStorage.getItem('user_id') // sesuaikan penyimpanan user id kamu
+
+            await Promise.all([
+              axios.post(`${baseURL}/api/dashboard/rt/update`, {
+                id_wilayah: this.form_stat.id_wilayah,
+                id_petugas: idPetugas,
+                count_rt: this.form_stat.rt,
+              }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+
+              axios.post(`${baseURL}/api/dashboard/rw/update`, {
+                id_wilayah: this.form_stat.id_wilayah,
+                id_petugas: idPetugas,
+                count_rw: this.form_stat.rw,
+              }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+
+              axios.post(`${baseURL}/api/dashboard/stat-keluarga/update`, {
+                id_wilayah: this.form_stat.id_wilayah,
+                id_petugas: idPetugas,
+                count_keluarga: this.form_stat.keluarga,
+              }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+            ])
+
+            this.importProgress = 70
+            this.animatedProgress = 70
+            await this.loadData()
+            this.importProgress = 90
+            this.animatedProgress = 90
+            this.resetForm()
+            this.importProgress = 100
+
+            await new Promise((resolve) => {
+              const interval = setInterval(() => {
+                if (this.animatedProgress >= 100) { clearInterval(interval); resolve() }
+                else this.animatedProgress += 5
+              }, 30)
+            })
+
+            this.isLoadingImport = false
+            Swal.fire({
+              icon: 'success',
+              html: 'Data statistik desa berhasil diperbarui',
+              buttonsStyling: false,
+              customClass: { confirmButton: 'btn btn-primary mx-1' },
+            })
+            break
+          }
           default:
             break;
         }
@@ -2753,6 +3026,7 @@ export default {
       this.formOpen = false
       this.formOpen_bumil = false
       this.formOpen_catin = false
+      this.formOpen_stat = false
 
       // Tutup semua upload
       this.isUploadOpen = false
@@ -2791,7 +3065,7 @@ export default {
         gender: "",
         tgl_lahir: ""
       }
-
+      this.form_stat = { id_wilayah: '', mode: '', rt: '', rw: '', keluarga: '' }
       this.form_bumil = {}
       this.form_catin = {}
     },
@@ -3251,38 +3525,102 @@ export default {
     },
     async loadData() {
       try {
-        let res = null;
+        let res = null
+        const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        var payload
 
-        const headers = {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        };
-
-        var payload;
         switch (this.activeMenu) {
           case 'anak':
-            res = await axios.get(`${baseURL}/api/children`, { headers,params: this.filters });
-            payload = res.data.data_anak ?? {};
-            this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload);
-            break;
+            res = await axios.get(`${baseURL}/api/children`, { headers, params: this.filters })
+            payload = res.data.data_anak ?? {}
+            this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload)
+            break
+
           case 'bumil':
-            res = await axios.get(`${baseURL}/api/pregnancy`, { headers,params: this.filters });
-            payload = res.data?.data || [];
-            this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload);
-            break;
+            res = await axios.get(`${baseURL}/api/pregnancy`, { headers, params: this.filters })
+            payload = res.data?.data || []
+            this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload)
+            break
 
           case 'catin':
-            res = await axios.get(`${baseURL}/api/bride`, { headers,params: this.filters });
-            payload = res.data ?? {};
-            this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload);
-            break;
-          default:
-            return;
-        }
-        //console.log(this.dataLoad);
+            res = await axios.get(`${baseURL}/api/bride`, { headers, params: this.filters })
+            payload = res.data ?? {}
+            this.dataLoad = Array.isArray(payload) ? payload : Object.values(payload)
+            break
 
+          case 'stat':
+            await this.loadDataStat()
+            break
+
+          default:
+            return
+        }
       } catch (e) {
-        console.error('Gagal ambil data:', e);
-        //this.paginatedData = [];
+        console.error('Gagal ambil data:', e)
+      }
+    },
+    async loadDataStat() {
+      try {
+        const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        const isSuperAdmin = this.role === 'Super Admin'
+        const idWilayah = isSuperAdmin ? '' : this.filters.idWilayah
+
+        const [rtRes, rwRes, keluargaRes] = await Promise.all([
+          axios.get(`${baseURL}/api/dashboard/rt/${idWilayah}`, { headers }),
+          axios.get(`${baseURL}/api/dashboard/rw/${idWilayah}`, { headers }),
+          axios.get(`${baseURL}/api/dashboard/stat-keluarga/${idWilayah}`, { headers }),
+        ])
+
+        const map = {}
+        const put = (rows, field) => {
+          rows.forEach((r) => {
+            map[r.id_wilayah] = map[r.id_wilayah] || { id_wilayah: r.id_wilayah }
+            map[r.id_wilayah][field] = r[field === 'rt' ? 'count_rt' : field === 'rw' ? 'count_rw' : 'count_keluarga']
+          })
+        }
+
+        put(rtRes.data, 'rt')
+        put(rwRes.data, 'rw')
+        put(keluargaRes.data, 'keluarga')
+
+        this.dataLoad_stat = Object.values(map)
+          .filter(item =>
+            isSuperAdmin ? this.listKelurahan.some(w => w.id === item.id_wilayah) : true
+          )
+          .map((item) => {
+            const wilayah = this.listKelurahan.find((w) => w.id === item.id_wilayah)
+            return {
+              id_wilayah: item.id_wilayah,
+              desa: wilayah?.kelurahan ?? this.kelurahan ?? '-',
+              rt: item.rt ?? 0,
+              rw: item.rw ?? 0,
+              keluarga: item.keluarga ?? 0,
+            }
+          })
+
+        // 🔥 TAMBAHAN: kalau admin desa dan belum ada baris sama sekali,
+        // buat baris default (kosong) supaya tetap bisa klik "Ubah" untuk mengisi pertama kali
+        if (!isSuperAdmin && this.dataLoad_stat.length === 0 && this.filters.idWilayah) {
+          this.dataLoad_stat = [
+            {
+              id_wilayah: this.filters.idWilayah,
+              desa: this.kelurahan ?? '-',
+              rt: 0,
+              rw: 0,
+              keluarga: 0,
+            },
+          ]
+        }
+
+        // Super Admin dengan filter desa aktif → filter lagi berdasarkan nama desa terpilih
+        if (isSuperAdmin && this.filters.kelurahan) {
+          this.dataLoad_stat = this.dataLoad_stat.filter(
+            (item) => item.desa === this.filters.kelurahan
+          )
+        }
+      } catch (e) {
+        console.error('Gagal ambil data statistik:', e)
+        this.dataLoad_stat = []
       }
     },
     updateProgressBar(percent, row, total) {
