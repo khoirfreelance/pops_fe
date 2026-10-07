@@ -1205,14 +1205,7 @@ import 'vue3-easy-data-table/dist/style.css'
 import * as XLSX from 'xlsx'
 import Swal from 'sweetalert2'
 
-// PORT backend kamu
-const API_PORT = 8000;
-
-// Bangun base URL dari window.location
-const { protocol, hostname } = window.location;
-// contoh hasil: "http://192.168.0.5:8000"
-const baseURL = `${protocol}//${hostname}:${API_PORT}`;
-// inisialisasi DataTables agar pakai styling Bootstrap 5
+const baseURL = 'https://datapops.id/apps/public'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
